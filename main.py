@@ -1,10 +1,17 @@
 from ultralytics import YOLO
 import cv2
+import argparse
 
 import util
 from sort.sort import *
 from util import get_car, read_license_plate, write_csv
 
+
+# 讀輸入檔名
+parser = argparse.ArgumentParser(description="Process an input video file.")
+parser.add_argument('-input', type=str, required=True, help='Path to the input video file')
+args = parser.parse_args()
+input_path = args.input
 
 results = {}
 
@@ -15,7 +22,7 @@ coco_model = YOLO('yolov8n.pt')
 license_plate_detector = YOLO('license_plate_detector.pt')
 
 # load video
-cap = cv2.VideoCapture('./sample.mp4')
+cap = cv2.VideoCapture(input_path)
 
 vehicles = [2, 3, 5, 7]
 
