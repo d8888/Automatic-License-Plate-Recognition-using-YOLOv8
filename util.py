@@ -58,6 +58,29 @@ def write_csv(results, output_path):
         f.close()
 
 
+def write_csv_monitor(results, output_path):
+    """
+    Write the results to a CSV file.
+
+    Args:
+        results (dict): Dictionary containing the results.
+        output_path (str): Path to the output CSV file.
+    """
+    with open(output_path, 'w') as f:
+        f.write("{},{},{},{},{},{}\n".format('x1', 'y1', 'x2', 'y2', 'text', 'text_score'))
+
+        for frame_nmr in results.keys():
+            print(results[frame_nmr])
+            x1 = results[frame_nmr]['bbox'][0]
+            y1 = results[frame_nmr]['bbox'][1]
+            x2 = results[frame_nmr]['bbox'][2]
+            y2 = results[frame_nmr]['bbox'][3]
+            text = results[frame_nmr]['text']
+            text_score = results[frame_nmr]['text_score']
+            f.write('{},{},{},{},{},{}\n'.format(x1, y1, x2, y2, text, text_score))
+
+        f.close()
+
 def license_complies_format(text):
     """
     Check if the license plate text complies with the required format.
@@ -82,6 +105,18 @@ def license_complies_format(text):
     else:
         return False
 
+
+def format_monitor(text):
+    """
+    Format the text for monitors, currently does nothing
+
+    Args:
+        text (str): monitor text
+
+    Returns:
+        str: Formatted monitor text.
+    """    
+    return text
 
 def format_license(text):
     """
@@ -127,6 +162,27 @@ def read_license_plate(license_plate_crop):
             return format_license(text), score
 
     return None, None
+
+def read_monitor(monitor_crop):
+    """
+    Read the monitor text from the given cropped image.
+
+    Args:
+        monitor_crop (PIL.Image.Image): Cropped image containing the monitor
+
+    Returns:
+        tuple: Tuple containing the formatted monitor text and its confidence score.
+    """
+
+    detections = reader.readtext(monitor_crop)
+
+    for detection in detections:
+        bbox, text, score = detection
+
+        text = text.upper().replace(' ', '')
+
+        
+    return format_monitor(text), score
 
 
 def get_car(license_plate, vehicle_track_ids):
